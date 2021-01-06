@@ -121,12 +121,9 @@ const Tasks = () => {
                         onChange={e => setTask(e.target.value)}
                     />
                     <label className="form-control">
-                    Complete?
-                    </label>
-                    <input 
-                        type="checkbox" 
-                        className="form-control mb-2 mt-3"
-                    />
+                        Is completed?
+                    </label> 
+                    <input type="checkbox" className="form-control"/>
                     {
                         error && (
                             <Alert message={error}/>

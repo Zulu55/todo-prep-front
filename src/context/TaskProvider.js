@@ -4,10 +4,13 @@ import axios from 'axios'
 export const TaskContext = React.createContext()
 
 const api = axios.create({
-    baseURL: 'https://todoapiprep.azurewebsites.net',
+    baseURL: 'https://taskprep.azurewebsites.net',
     headers: {
-        'Accept': '*/*',
-        'Accept-Encoding': 'gzip, deflate, br'
+        // 'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        // 'Access-Control-Allow-Origin': '*', 
+        // 'Access-Control-Allow-Methods': 'DELETE, PUT, POST, GET, OPTIONS',
+        // 'Access-Control-Allow-Headers': 'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With'
     }
 })
 
@@ -17,7 +20,7 @@ const TaskProvider = (props) => {
 
     const putTask = async(taskToUpdate) => {
         try {
-            await api.put(`/api/todo/${taskToUpdate.rowKey}`, JSON.stringify(taskToUpdate))
+            await api.put(`/api/todos/${taskToUpdate.rowKey}`, JSON.stringify(taskToUpdate))
             const editedTask = tasks.map(item => (
                 item.rowKey === taskToUpdate.rowKey ? taskToUpdate : item
             ))
@@ -29,7 +32,7 @@ const TaskProvider = (props) => {
 
    const deleteTask = async(rowKey) => {
         try {
-            await api.delete(`/api/todo/${rowKey}`)
+            await api.delete(`/api/todos/${rowKey}`)
             const filterTask = tasks.filter(item => item.rowKey !== rowKey)
             setTasks(filterTask)
         } catch (error) {
@@ -39,12 +42,12 @@ const TaskProvider = (props) => {
 
     const postTask = async(newTask) => {
         try {
-            const response = await api.post('/api/todo/', JSON.stringify(newTask))
+            const response = await api.post('/api/todos/', JSON.stringify(newTask))
             setTasks([...tasks, {
-                'createdTime': response.data.result.createdTime,
-                'taskDescription': response.data.result.taskDescription,
-                'isCompleted': response.data.result.isCompleted,
-                'rowKey': response.data.result.rowKey
+                'createdTime': response.data.createdTime,
+                'taskDescription': response.data.taskDescription,
+                'isCompleted': response.data.isCompleted,
+                'rowKey': response.data.id
             }])
         } catch (error) {
             console.log(error)
@@ -53,12 +56,12 @@ const TaskProvider = (props) => {
 
     const getTasks = async() => {
         try {
-            const response = await api.get('/api/todo/')
-            const list = response.data.result.map(item => ({
+            const response = await api.get('/api/todos/')
+            const list = response.data.map(item => ({
                 'createdTime': item.createdTime,
                 'taskDescription': item.taskDescription,
                 'isCompleted': item.isCompleted,
-                'rowKey': item.rowKey
+                'rowKey': item.id
             }))
             setTasks(list)
         } catch (error) {
