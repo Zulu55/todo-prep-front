@@ -5,10 +5,9 @@ export const TaskContext = React.createContext()
 
 const api = axios.create({
     baseURL: 'https://todoapiprep.azurewebsites.net',
-    headers: {
-        'Accept': '*/*',
-        'Accept-Encoding': 'gzip, deflate, br'
-    }
+    // headers: {
+    //     'Access-Control-Allow-Origin': '*'
+    // }
 })
 
 const TaskProvider = (props) => {
@@ -40,12 +39,12 @@ const TaskProvider = (props) => {
     const postTask = async(newTask) => {
         try {
             const response = await api.post('/api/todo/', JSON.stringify(newTask))
-            setTasks([...tasks, {
+            setTasks([{
                 'createdTime': response.data.result.createdTime,
                 'taskDescription': response.data.result.taskDescription,
                 'isCompleted': response.data.result.isCompleted,
                 'rowKey': response.data.result.rowKey
-            }])
+            }, ...tasks])
         } catch (error) {
             console.log(error)
         }
